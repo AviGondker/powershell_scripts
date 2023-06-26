@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/12368142/powershell-retrieving-a-variable-from-a-text-file
