@@ -1,0 +1,30 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20220606100428
+Username: SBS\agondker
+RunAs User: SBS\agondker
+Configuration Name: 
+Machine: SBS-PL700109IT (Microsoft Windows NT 10.0.19042.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell_ise.exe C:\EC_Upload\ad_expcloud.ps1
+Process ID: 21576
+PSVersion: 5.1.19041.1682
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.1682
+BuildVersion: 10.0.19041.1682
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+PS>TerminatingError(Set-ADUser): "Cannot validate argument on parameter 'Add'. The argument is null or an element of the argument collection contains a null value."
+WARNING: [WARNING] SAMAccountName for [sbsm21xx1@said.oxford.edu] does not exist
+PS>TerminatingError(Set-ADUser): "Cannot validate argument on parameter 'Add'. The argument is null or an element of the argument collection contains a null value."
+WARNING: [WARNING] SAMAccountName for [sbsm21xx2@said.oxford.edu] does not exist
+PS>TerminatingError(Set-ADUser): "Cannot validate argument on parameter 'Add'. The argument is null or an element of the argument collection contains a null value."
+WARNING: [WARNING] SAMAccountName for [sbsm21xx3@said.oxford.edu] does not exist
+PS>TerminatingError(Set-ADUser): "Cannot validate argument on parameter 'Add'. The argument is null or an element of the argument collection contains a null value."
+WARNING: [WARNING] SAMAccountName for [sbsm21xx4@said.oxford.edu] does not exist
+**********************
+Windows PowerShell transcript end
+End time: 20220606100429
+**********************

@@ -1,9 +1,15 @@
-# # MLF Bulk Password Reset Utility V1
-# This script resets all the MLF passwords ahead of them being given their lifelong addresses
-# Avi Gondker 2023
+# # Experience Cloud ID Active Directory Tool V1.5
+# This script adds the Salesforce Experience Cloud ID to the relevant Active Directory Accounts 
+# Avi Gondker 2021
+
 
 # Revisions
-# 22/06/23 - V1 - First Draft
+# 09/09/21 - V1 - First Draft - stand-alone scrpit to create MBA accounts from CSV
+# 06/06/22 - V1.2 - Amended to use SBS folders, rather than local test, and uploaded to RDWEB
+# 07/06/22 - V1.3 - Amended logs name, re-designed interface, added copyright notices
+# 15/06/22 - V1.4 - Added requirement to add account to the "SBS-UG-ExperienceCloud" AD access group
+# 11/07/22 - V1.5 - Amended AD Access group to "SBS-UG-SalesForceNewExperienceCloud"
+
 
 Import-Module ActiveDirectory
 
@@ -17,14 +23,14 @@ $count=0
 $ErrorLog = @()
 $SuccessLog = @()
 $VerbosePreference = "Continue"
-$LogFolder = "C:\MFE_pwreset\logs"
+$LogFolder = "C:\EC_Upload\logs"
 
 #Creates the interface
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
 $main_form = New-Object System.Windows.Forms.Form
-$main_form.Text ='MLF Bulk Password Reset Utility'
+$main_form.Text =’Student EC ID Import Script'
 $main_form.Width = 425
 $main_form.Height = 400
 $main_form.AutoSize = $false
@@ -53,11 +59,11 @@ $ImportFileLabel.Location  = New-Object System.Drawing.Point(10,100)
 $ImportFileLabel.AutoSize = $true
 $main_form.Controls.Add($ImportFileLabel)
 
-#Reset The Passwords Button
+#Add the Add Experience Cloud IDs Button
 $createButton = New-Object System.Windows.Forms.Button
 $createButton.Location = New-Object System.Drawing.Point(10,130)
 $createButton.Size = New-Object System.Drawing.Size(380,40)
-$createButton.Text = "Reset MLF Passwords"
+$createButton.Text = "Upload Experience Cloud ID's"
 $main_form.Controls.Add($createButton)
 
 # Add the Progress Bar
@@ -89,7 +95,7 @@ $main_form.Controls.Add($exitButton)
 
 ## Add the Copyright Notices
 $CopyrightLabel = New-Object System.Windows.Forms.Label
-$CopyrightLabel.Text = "Copyright 2023, Avi Gondker, All Rights Reserved"
+$CopyrightLabel.Text = "Copyright © 2022, Avi Gondker, All Rights Reserved"
 $CopyrightLabel.AutoSize = $true
 $CopyrightLabel.Location  = New-Object System.Drawing.Point(10,320)
 $main_form.Controls.Add($CopyrightLabel)
@@ -121,24 +127,31 @@ Start-Transcript -Path "$LogFolder\session-$date.log"
 #Displays the Progress Bar
 $progressBar.Visible=$true
 
+#Checks for and creates logging directory if not already present
+#if (!(test-path $LogFolder\$classyear)) 
+#{
+#   Write-Verbose "Folder [$($LogFolder)] does not exist, creating"
+#   New-Item -Path $LogFolder -Name $classyear -ItemType "directory" -Force 
+#   }
+#Sets the Progress bar 100% value to total number of accounts in the import file
 
 ForEach($user in $users)
 {
-$progressBar.Maximum=$users.Count     
+$progressBar.Maximum=$users.Count      
 #This section creates the accounts. If the AD Object does NOT already exist, create it, and add entry to the log file
 try {
-       Set-ADAccountPassword -Identity $user.username -NewPassword (ConvertTo-SecureString -AsPlainText $user.password -Force)
-       Add-ADGroupMember -Identity "SBS-LG-Exchange_Online_for_Alumni" -Members $user.username
-       Write-Verbose "[PASS] Sucessfully reset Password for [$($user.Username)]"
-       $global:SuccessLog += $user.username + " PASS - Succesfully Reset password"
+       Set-ADUser -Identity $user.Username -Add @{extensionAttribute5 = $user.EC_ID}
+       Add-ADGroupMember -Identity "SBS-UG-SalesForceNewExperienceCloud" -Members $user.Username
+       Write-Verbose "[PASS] Added EC ID code for [$($user.Username)] and added to relevant Salesforce Access group"
+       $global:SuccessLog += $user.Username + " PASS - Sucesfully Added EC ID code"
        $global:s++
        $count++
        $progressBar.PerformStep()                                     
           }
       
 catch {
-        Write-Warning "[WARNING] SAMAccountName for [$($user.username)] does not exist"
-        $global:ErrorLog += $user.username + " FAILED - AD object does not exist"
+        Write-Warning "[WARNING] SAMAccountName for [$($user.Username)] does not exist"
+        $global:ErrorLog += $user.Username + " FAILED - AD object does not exist"
         $global:f++
         $count++
         $progressBar.PerformStep()                                
@@ -150,7 +163,7 @@ $ErrorLog | out-file -FilePath  $LogFolder\Import_fail-$date.log -Force
 $SuccessLog | out-file -FilePath  $LogFolder\Import_success-$date.log -Force
 }
 Stop-Transcript
-[System.Windows.Forms.MessageBox]::Show("Sucessfully Reset Passwords for the MLF Cohort!`n`nReset : $s`nFailed : $f  `n`nPlease review event logs for more info")
+[System.Windows.Forms.MessageBox]::Show("EC IDs added!`n`nID Sucessfully Added : $s`nIDs Failed : $f  `n`nPlease review event logs for more info")
 }
 )
 

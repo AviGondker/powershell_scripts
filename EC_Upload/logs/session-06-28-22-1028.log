@@ -1,0 +1,26 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20220606102823
+Username: SBS\agondkeradmin
+RunAs User: SBS\agondkeradmin
+Configuration Name: 
+Machine: SBS-PL700109IT (Microsoft Windows NT 10.0.19042.0)
+Host Application: C:\WINDOWS\system32\WindowsPowerShell\v1.0\PowerShell_ISE.exe
+Process ID: 8260
+PSVersion: 5.1.19041.1682
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.1682
+BuildVersion: 10.0.19041.1682
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+VERBOSE: [PASS] Added EC ID code for [sbsm21xx1]
+VERBOSE: [PASS] Added EC ID code for [sbsm21xx2]
+VERBOSE: [PASS] Added EC ID code for [sbsm21xx3]
+VERBOSE: [PASS] Added EC ID code for [sbsm21xx4]
+**********************
+Windows PowerShell transcript end
+End time: 20220606102823
+**********************

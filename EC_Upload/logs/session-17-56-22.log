@@ -1,0 +1,30 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20220617115649
+Username: SBS\agondkeradmin
+RunAs User: SBS\agondkeradmin
+Configuration Name: 
+Machine: SBS-PL700109IT (Microsoft Windows NT 10.0.19042.0)
+Host Application: C:\WINDOWS\system32\WindowsPowerShell\v1.0\PowerShell_ISE.exe
+Process ID: 11544
+PSVersion: 5.1.19041.1682
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.1682
+BuildVersion: 10.0.19041.1682
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+PS>TerminatingError(Set-ADUser): "Cannot find an object with identity: 'sbsm21xx1@said.oxford.edu' under: 'DC=sbs,DC=ox,DC=ac,DC=uk'."
+WARNING: [WARNING] SAMAccountName for [sbsm21xx1@said.oxford.edu] does not exist
+PS>TerminatingError(Set-ADUser): "Cannot find an object with identity: 'sbsm21xx2@said.oxford.edu' under: 'DC=sbs,DC=ox,DC=ac,DC=uk'."
+WARNING: [WARNING] SAMAccountName for [sbsm21xx2@said.oxford.edu] does not exist
+PS>TerminatingError(Set-ADUser): "Cannot find an object with identity: 'sbsm21xx3@said.oxford.edu' under: 'DC=sbs,DC=ox,DC=ac,DC=uk'."
+WARNING: [WARNING] SAMAccountName for [sbsm21xx3@said.oxford.edu] does not exist
+PS>TerminatingError(Set-ADUser): "Cannot find an object with identity: 'sbsm21xx4@said.oxford.edu' under: 'DC=sbs,DC=ox,DC=ac,DC=uk'."
+WARNING: [WARNING] SAMAccountName for [sbsm21xx4@said.oxford.edu] does not exist
+**********************
+Windows PowerShell transcript end
+End time: 20220617115649
+**********************

@@ -1,0 +1,33 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20211130215854
+Username: HOMENET\Administrator
+RunAs User: HOMENET\Administrator
+Configuration Name: 
+Machine: AVI-LAPTOP (Microsoft Windows NT 10.0.19044.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell_ise.exe C:\Phone_Changes\Update_Phone.ps1
+Process ID: 11732
+PSVersion: 5.1.19041.1320
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.1320
+BuildVersion: 10.0.19041.1320
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is C:\Phone_Changes\Logs\AD_Update-30-58-21-0958.log
+VERBOSE: [PASS] Updated Phone number for [sbsm20x11@said.oxford.edu]
+VERBOSE: [PASS] Updated Phone number for [sbsm20x12@said.oxford.edu]
+VERBOSE: [PASS] Updated Phone number for [sbsm20x13@said.oxford.edu]
+VERBOSE: [PASS] Updated Phone number for [sbsm20x14@said.oxford.edu]
+VERBOSE: [PASS] Updated Phone number for [sbsm20x15@said.oxford.edu]
+VERBOSE: [PASS] Updated Phone number for [sbsm20x16@said.oxford.edu]
+VERBOSE: [PASS] Updated Phone number for [sbsm20x17@said.oxford.edu]
+VERBOSE: [PASS] Updated Phone number for [sbsm20x18@said.oxford.edu]
+VERBOSE: [PASS] Updated Phone number for [sbsm20x19@said.oxford.edu]
+VERBOSE: [PASS] Updated Phone number for [sbsm20x20@said.oxford.edu]
+**********************
+Windows PowerShell transcript end
+End time: 20211130215855
+**********************
