@@ -1,0 +1,26 @@
+#Variables
+$UserUPN = "salaudeen@crescent.com"
+ 
+#Connect to AzureAD
+Connect-AzureAD -Credential (Get-Credential) | Out-Null
+  
+#Get all Azure AD Unified Groups
+$AADGroups = Get-AzureADMSGroup -Filter "groupTypes/any(c:c eq 'Unified')" -All:$true
+ 
+#Get the Azure AD User
+$AADUser  = Get-AzureADUser -Filter "UserPrincipalName eq '$UserUPN'"
+ 
+#Check each group for the user
+ForEach ($Group in $AADGroups)
+{
+    $GroupMembers = (Get-AzureADGroupMember -ObjectId $Group.id).UserPrincipalName
+    If ($GroupMembers -contains $UserUPN)
+    {
+        #Remove user from Group
+        Remove-AzureADGroupMember -ObjectId $Group.Id -MemberId $AADUser.ObjectId
+        Write-Output "$UserUPN was removed from $($Group.DisplayName)"
+    }
+}
+
+
+#Read more: https://www.sharepointdiary.com/2019/01/remove-user-from-office-365-group-using-powershell.html#ixzz87oMsoSY6

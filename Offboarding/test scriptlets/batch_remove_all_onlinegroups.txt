@@ -1,0 +1,29 @@
+#Variables
+$CSVFile = "C:\Temp\UserList.csv"
+  
+#Connect to AzureAD
+Connect-AzureAD -Credential (Get-Credential) | Out-Null
+   
+#Get all Azure AD Unified Groups
+$AADGroups = Get-AzureADMSGroup -Filter "groupTypes/any(c:c eq 'Unified')" -All:$true
+ 
+#Iterate through each line in CSV
+Import-CSV $CSVFile | ForEach-Object {
+    #Get the UPN
+    $UPN = $_.UPN
+     
+    #Get the Azure AD User
+    $AADUser  = Get-AzureADUser -Filter "UserPrincipalName eq '$UPN'"
+ 
+    #Check each group for the user
+    ForEach ($Group in $AADGroups) 
+    {
+        $GroupMembers = (Get-AzureADGroupMember -ObjectId $Group.id).UserPrincipalName
+        If ($GroupMembers -contains $UPN)
+        {
+            #Remove user from Group
+            Remove-AzureADGroupMember -ObjectId $Group.Id -MemberId $AADUser.ObjectId
+            Write-Output "$UPN is removed from Group '$($Group.DisplayName)'"
+        }
+    }
+}

@@ -1,0 +1,11 @@
+$Directory = "C:\temp\"
+$Shell = New-Object -ComObject Shell.Application
+
+Get-ChildItem -Path $Directory -Recurse -Force -Include *.mp4 | where fullname -notmatch 'Marketing' | where fullname -notmatch 'Geral' | 
+ForEach {
+    
+    $Folder = $Shell.Namespace($_.DirectoryName)
+    $File = $Folder.ParseName($_.Name)
+    $Duration = $Folder.GetDetailsOf($File, 27)
+      
+} | Export-Csv -Path "C:\Cursos\Azure\temp.csv" -NoTypeInformation -Encoding UTF8 -Delimiter ";"
