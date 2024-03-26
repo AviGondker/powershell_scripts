@@ -101,7 +101,7 @@ If ($user -ne $Null) {
 
     $Account_confirmLabel.Text = "Found account for $din"
 } Else {
-    $Account_confirmLabel.Text =  "WARNING : Could not find account for $user"
+    $Account_confirmLabel.Text =  "WARNING : Could not find account for $sam"
 }
 }
 )
@@ -135,12 +135,22 @@ Write-Verbose ($din + "'s Active Directory account is disabled.")
 Set-ADUser $dn -Description ("Leaver : $ticketRef - $date")
 Set-ADUser -Identity $dn -Clear Manager
 Write-Verbose  ("* " + $din + "'s Active Directory Description updated.")
-#$ActionLog += $ad_user.username + " Attributes Updated"
+#$ActionLog += $ad_user.username + " Attributes Updated - Description"
+
+# Remove the LoginScript attributes
+Set-ADUser -Identity $dn -Clear ScriptPath
+Write-Verbose  ("* " + $din + "'s Active Directory Loginscript removed.")
+#$ActionLog += $ad_user.username + " Attributes Updated - Loginscript"
 
 # Strip the permissions from the account
 Get-ADUser $dn -Properties MemberOf | Select-Object -Expand MemberOf | ForEach-Object {Remove-ADGroupMember $_ -member $dn -Confirm:$false} 
 Write-Verbose  ("* " + $din + "'s Active Directory group memberships (permissions) stripped from account")
 #$ActionLog += $user.username + " Active Directory group memberships (permissions) stripped from account"
+
+# Set Account Expiry Date
+Set-ADAccountExpiration -Identity $dn -DateTime $date
+Write-Verbose  ("* " + $din + "'s Active Directory Account set to expire")
+#$ActionLog += $user.username + " Active Directory accout set to expire"
 
 # Move the account to the Disabled Users OU
 Move-ADObject -Identity $dn -TargetPath "OU=Leavers, OU=Disabled Accounts, OU=Decommissioned Computers, DC=homenet, DC=local"
