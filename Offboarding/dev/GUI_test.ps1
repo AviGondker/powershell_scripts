@@ -93,7 +93,7 @@ $main_form.Controls.Add($CopyrightLabel)
 $finduserButton.Add_Click(
 {
 $sam = $UsernameField.Text
-$user = $(try {Get-ADUser $sam -properties distinguishedName, displayName -server dc01.homenet.local} catch {$null})
+$user = $(try {Get-ADUser $sam -properties distinguishedName, displayName -server sbs-pe019102.sbs.ox.ac.uk} catch {$null})
 $dn = $user.distinguishedName
 $din = $user.displayName
 
@@ -119,43 +119,38 @@ $main_form.Controls.Add($Account_testLabel)
 $processButton.Add_Click(
 {
 $sam = $UsernameField.Text
-$user = $(try {Get-ADUser $sam -properties distinguishedName, displayName -server dc01.homenet.local} catch {$null})
+$user = $(try {Get-ADUser $sam -properties distinguishedName, displayName -server sbs-pe019102.sbs.ox.ac.uk} catch {$null})
 $dn = $user.distinguishedName
 $din = $user.displayName
 $ticketRef = $TicketField.Text
 #Starts Session logging
 Start-Transcript -Path "$LogFolder\session-$date.log"
 
+# Set Account Expiry Date
+Set-ADAccountExpiration -Identity $dn -DateTime $date
+Write-Verbose  ("* " + $din + "'s Active Directory Account set to expire")
+#$ActionLog += $user.username + " Active Directory accout set to expire"
+
 # Disable the account
 Disable-ADAccount $dn
 Write-Verbose ($din + "'s Active Directory account is disabled.")
-#$ActionLog += $ad_user.username + " Account Disabled"
-
-# Add the relevant info to the leavers description on the account's properties page, clean out manager etc
-Set-ADUser $dn -Description ("Leaver : $ticketRef - $date")
-Set-ADUser -Identity $dn -Clear Manager
-Write-Verbose  ("* " + $din + "'s Active Directory Description updated.")
-#$ActionLog += $ad_user.username + " Attributes Updated - Description"
-
-# Remove the LoginScript attributes
-Set-ADUser -Identity $dn -Clear ScriptPath
-Write-Verbose  ("* " + $din + "'s Active Directory Loginscript removed.")
-#$ActionLog += $ad_user.username + " Attributes Updated - Loginscript"
+#$ActionLog += $user.username + " Account Disabled"
 
 # Strip the permissions from the account
 Get-ADUser $dn -Properties MemberOf | Select-Object -Expand MemberOf | ForEach-Object {Remove-ADGroupMember $_ -member $dn -Confirm:$false} 
 Write-Verbose  ("* " + $din + "'s Active Directory group memberships (permissions) stripped from account")
 #$ActionLog += $user.username + " Active Directory group memberships (permissions) stripped from account"
 
-# Set Account Expiry Date
-Set-ADAccountExpiration -Identity $dn -DateTime $date
-Write-Verbose  ("* " + $din + "'s Active Directory Account set to expire")
-#$ActionLog += $user.username + " Active Directory accout set to expire"
+# Add the relevant info to the leavers description on the account's properties page, clean out manager etc
+Set-ADUser $dn -Description ("Leaver : $ticketRef - $date")
+Set-ADUser -Identity $dn -Clear Manager
+Write-Verbose  ("* " + $din + "'s Active Directory Description updated.")
+#$ActionLog += $user.username + " Attributes Updated - Description"
 
 # Move the account to the Disabled Users OU
-Move-ADObject -Identity $dn -TargetPath "OU=Leavers, OU=Disabled Accounts, OU=Decommissioned Computers, DC=homenet, DC=local"
+Move-ADObject -Identity $dn -TargetPath "OU=Leavers,OU=Disabled Accounts,OU=Decommissioned Computers,DC=sbs,DC=ox,DC=ac,DC=uk"
 Write-Verbose  ("* " + $din + "'s Active Directory account moved to 'Leavers' OU")
-#$SuccessLog += $user.username + "Active Directory account moved to 'Leavers' OU"
+#$ActionLog += $user.username + "Active Directory account moved to 'Leavers' OU"
 
 $ActionLog | out-file -FilePath  $LogFolder\DisableAaccount-$date.log -Force
 Stop-Transcript
