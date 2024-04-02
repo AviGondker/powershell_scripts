@@ -94,7 +94,6 @@ $finduserButton.Add_Click(
 {
 $sam = $UsernameField.Text
 $user = $(try {Get-ADUser $sam -properties distinguishedName, displayName -server sbs-pe019102.sbs.ox.ac.uk} catch {$null})
-$dn = $user.distinguishedName
 $din = $user.displayName
 
 If ($user -ne $Null) {
