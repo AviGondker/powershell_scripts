@@ -105,8 +105,6 @@ If ($user -ne $Null) {
 }
 )
 
-###TESTING AREA###
-## 
 #Account detection
 $Account_testLabel = New-Object System.Windows.Forms.Label
 $Account_testLabel.Text = "Account you have selected : "

@@ -1,3 +1,23 @@
+<############################################################################################################
+
+Purpose: Off-loading employees in both Active Directory and Exchange.
+
+Chain:
+
+Active Directory Section:
+* Asks admin for a user name to disable.
+* Checks for active user with that name.
+* Disables user in AD.
+* Resets the password of the user's AD account.
+* Adds the path of the OU that the user came from to the "Description" of the account.
+* Exports a list of the user's group memberships (permissions) to an Excel file in a specified directory.
+* Strips group memberships from user's AD account.
+* Moves user's AD account to the "Disabled Users" OU.
+
+## Suggestions for developments :
+Implement a tick box for "Holding" - will then move to Holding and add additional/different notes etc?
+
+############################################################################################################>
 Import-Module ActiveDirectory
 
 # Initialise Variables
@@ -93,7 +113,7 @@ $main_form.Controls.Add($CopyrightLabel)
 $finduserButton.Add_Click(
 {
 $sam = $UsernameField.Text
-$user = $(try {Get-ADUser $sam -properties distinguishedName, displayName -server sbs-pe019102.sbs.ox.ac.uk} catch {$null})
+$user = $(try {Get-ADUser $sam -properties distinguishedName, displayName} catch {$null})
 $dn = $user.distinguishedName
 $din = $user.displayName
 
@@ -106,9 +126,8 @@ If ($user -ne $Null) {
 }
 )
 
-###TESTING AREA###
-## 
-#Account detection
+#
+#Account checks
 $Account_testLabel = New-Object System.Windows.Forms.Label
 $Account_testLabel.Text = "Account you have selected : "
 $Account_testLabel.Location  = New-Object System.Drawing.Point(10,300)
@@ -119,7 +138,7 @@ $main_form.Controls.Add($Account_testLabel)
 $processButton.Add_Click(
 {
 $sam = $UsernameField.Text
-$user = $(try {Get-ADUser $sam -properties distinguishedName, displayName -server sbs-pe019102.sbs.ox.ac.uk} catch {$null})
+$user = $(try {Get-ADUser $sam -properties distinguishedName, displayName} catch {$null})
 $dn = $user.distinguishedName
 $din = $user.displayName
 $ticketRef = $TicketField.Text
@@ -134,23 +153,23 @@ Write-Verbose  ("* " + $din + "'s Active Directory Account set to expire")
 # Disable the account
 Disable-ADAccount $dn
 Write-Verbose ($din + "'s Active Directory account is disabled.")
-#$ActionLog += $user.username + " Account Disabled"
+$ActionLog += $user.username + " Account Disabled"
 
 # Strip the permissions from the account
 Get-ADUser $dn -Properties MemberOf | Select-Object -Expand MemberOf | ForEach-Object {Remove-ADGroupMember $_ -member $dn -Confirm:$false} 
 Write-Verbose  ("* " + $din + "'s Active Directory group memberships (permissions) stripped from account")
-#$ActionLog += $user.username + " Active Directory group memberships (permissions) stripped from account"
+$ActionLog += $user.username + " Active Directory group memberships (permissions) stripped from account"
 
 # Add the relevant info to the leavers description on the account's properties page, clean out manager etc
 Set-ADUser $dn -Description ("Leaver : $ticketRef - $date")
 Set-ADUser -Identity $dn -Clear Manager
 Write-Verbose  ("* " + $din + "'s Active Directory Description updated.")
-#$ActionLog += $user.username + " Attributes Updated - Description"
+$ActionLog += $user.username + " Attributes Updated - Description"
 
-# Move the account to the Disabled Users OU
+# Move the account to the Leavers OU
 Move-ADObject -Identity $dn -TargetPath "OU=Leavers,OU=Disabled Accounts,OU=Decommissioned Computers,DC=sbs,DC=ox,DC=ac,DC=uk"
 Write-Verbose  ("* " + $din + "'s Active Directory account moved to 'Leavers' OU")
-#$ActionLog += $user.username + "Active Directory account moved to 'Leavers' OU"
+$ActionLog += $user.username + "Active Directory account moved to 'Leavers' OU"
 
 $ActionLog | out-file -FilePath  $LogFolder\DisableAaccount-$date.log -Force
 Stop-Transcript
