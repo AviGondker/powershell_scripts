@@ -49,7 +49,7 @@ $ActionLog += $user.username + " Account Disabled"
 
 # Add the relevant info to the leavers description on the account's properties page, clean out manager etc
 Set-ADUser $dn -Description ("Leaver : $ticketRef - $date")
-Set-ADUser -Identity $dn -Clear Manager
+#Set-ADUser -Identity $dn -Clear Manager
 Write-Verbose  ("* " + $din + "'s Active Directory Description updated.")
 $ActionLog += $user.username + " Attributes Updated"
 
