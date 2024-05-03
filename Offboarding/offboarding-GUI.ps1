@@ -10,14 +10,16 @@ Active Directory Section:
 * Disables user in AD.
 * Resets the password of the user's AD account.
 * Adds the path of the OU that the user came from to the "Description" of the account.
-* Exports a list of the user's group memberships (permissions) to an Excel file in a specified directory.
 * Strips group memberships from user's AD account.
 * Moves user's AD account to the "Disabled Users" OU.
 
 ## Suggestions for developments :
-Implement a tick box for "Holding" - will then move to Holding and add additional/different notes etc?
+# DONE - Implement GUI - enabled users to enter username and ticket ref
+# Implement a tick box for "Holding" - will then move to Holding and add additional/different notes etc?
+# Exports a list of the user's group memberships (permissions) to an Excel file in a specified directory.
 
 ############################################################################################################>
+
 Import-Module ActiveDirectory
 
 # Initialise Variables
@@ -160,7 +162,7 @@ Get-ADUser $dn -Properties MemberOf | Select-Object -Expand MemberOf | ForEach-O
 Write-Verbose  ("* " + $din + "'s Active Directory group memberships (permissions) stripped from account")
 $ActionLog += $user.username + " Active Directory group memberships (permissions) stripped from account"
 
-# Add the relevant info to the leavers description on the account's properties page, clean out manager etc
+# Add the relevant info to the leavers description on the account's properties page
 Set-ADUser $dn -Description ("Leaver : $ticketRef - $date")
 #Set-ADUser -Identity $dn -Clear Manager
 Write-Verbose  ("* " + $din + "'s Active Directory Description updated.")

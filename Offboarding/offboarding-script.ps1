@@ -10,13 +10,13 @@ Active Directory Section:
 * Disables user in AD.
 * Resets the password of the user's AD account.
 * Adds the path of the OU that the user came from to the "Description" of the account.
-* Exports a list of the user's group memberships (permissions) to an Excel file in a specified directory.
 * Strips group memberships from user's AD account.
 * Moves user's AD account to the "Disabled Users" OU.
 
 ## Suggestions for developments :
-Implement GUI - enabled users to enter username and ticket ref
-Implement a tick box for "Holding" - will then move to Holding and add additional/different notes etc?
+# DONE - Implement GUI - enabled users to enter username and ticket ref
+# Implement a tick box for "Holding" - will then move to Holding and add additional/different notes etc?
+# Exports a list of the user's group memberships (permissions) to an Excel file in a specified directory.
 
 ############################################################################################################>
 
