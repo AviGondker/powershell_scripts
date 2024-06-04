@@ -16,16 +16,17 @@ Active Directory Section:
 ## Suggestions for developments :
 # DONE - Implement GUI - enabled users to enter username and ticket ref
 # Implement a tick box for "Holding" - will then move to Holding and add additional/different notes etc?
-# Exports a list of the user's group memberships (permissions) to an Excel file in a specified directory.
+# Exports a list of the user's group memberships (permissions) to an Excel file in a specified directory?
 
 ############################################################################################################>
 
 Import-Module ActiveDirectory
 
 # Initialise Variables
-$LogFolder = "C:\temp\Logs\"
+$LogFolder = "C:\offboarding\logs"
 $date = [datetime]::Today.ToString('dd-MM-yyyy')
 $VerbosePreference = "Continue"
+$ActionLog = @()
 
 #Creates the interface
 Add-Type -AssemblyName System.Windows.Forms
@@ -88,16 +89,9 @@ $processButton.Size = New-Object System.Drawing.Size(380,40)
 $processButton.Text = "Process Account"
 $main_form.Controls.Add($processButton)
 
-## Add the View Logs Button
-$viewLogsButton = New-Object System.Windows.Forms.Button
-$viewLogsButton.Location = New-Object System.Drawing.Point(10,240)
-$viewLogsButton.Size = New-Object System.Drawing.Size(125,50)
-$viewLogsButton.Text = 'View Logs...'
-$main_form.Controls.Add($viewLogsButton)
-
 # Add the Exit Button
 $exitButton = New-Object System.Windows.Forms.Button
-$exitButton.Location = New-Object System.Drawing.Point(240,240)
+$exitButton.Location = New-Object System.Drawing.Point(140,240)
 $exitButton.Size = New-Object System.Drawing.Size(150,50)
 $exitButton.Text = 'EXIT'
 $exitButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
@@ -116,66 +110,66 @@ $finduserButton.Add_Click(
 {
 $sam = $UsernameField.Text
 $user = $(try {Get-ADUser $sam -properties distinguishedName, displayName} catch {$null})
-$dn = $user.distinguishedName
 $din = $user.displayName
 
 If ($user -ne $Null) {
 
-    $Account_confirmLabel.Text = "Found account for $din"
+    $Account_confirmLabel.Text = "Found account for $din, $sam"
 } Else {
-    $Account_confirmLabel.Text =  "WARNING : Could not find account for $sam"
+    $Account_confirmLabel.Text =  "WARNING : Could not find account for $din, $sam"
 }
 }
 )
 
-#
-#Account checks
-$Account_testLabel = New-Object System.Windows.Forms.Label
-$Account_testLabel.Text = "Account you have selected : "
-$Account_testLabel.Location  = New-Object System.Drawing.Point(10,300)
-$Account_testLabel.AutoSize = $true
-$main_form.Controls.Add($Account_testLabel)
-
 #What happens when you click the Process Account button
 $processButton.Add_Click(
 {
+
+#Starts Session logging 
+#Uncomment for debugging
+#Start-Transcript -Path "$LogFolder\session-$date.log"#Starts Session logging
+
 $sam = $UsernameField.Text
 $user = $(try {Get-ADUser $sam -properties distinguishedName, displayName} catch {$null})
-$dn = $user.distinguishedName
 $din = $user.displayName
+$dn= $user.distinguishedName
 $ticketRef = $TicketField.Text
-#Starts Session logging
-Start-Transcript -Path "$LogFolder\session-$date.log"
 
 # Set Account Expiry Date
 Set-ADAccountExpiration -Identity $dn -DateTime $date
 Write-Verbose  ("* " + $din + "'s Active Directory Account set to expire")
-#$ActionLog += $user.username + " Active Directory accout set to expire"
+$global:ActionLog += $din + " Active Directory account expiry set"
 
 # Disable the account
 Disable-ADAccount $dn
 Write-Verbose ($din + "'s Active Directory account is disabled.")
-$ActionLog += $user.username + " Account Disabled"
+$global:ActionLog += $din + " Account Disabled"
 
 # Strip the permissions from the account
 Get-ADUser $dn -Properties MemberOf | Select-Object -Expand MemberOf | ForEach-Object {Remove-ADGroupMember $_ -member $dn -Confirm:$false} 
 Write-Verbose  ("* " + $din + "'s Active Directory group memberships (permissions) stripped from account")
-$ActionLog += $user.username + " Active Directory group memberships (permissions) stripped from account"
+$global:ActionLog += $din + " Active Directory group memberships (permissions) stripped from account"
 
 # Add the relevant info to the leavers description on the account's properties page
-Set-ADUser $dn -Description ("Leaver : $ticketRef - $date")
+Set-ADUser $dn -Description ("Leaver - $ticketRef - $date")
+
+# Uncomment the line below to clears the Line Manager field
 #Set-ADUser -Identity $dn -Clear Manager
+
 Write-Verbose  ("* " + $din + "'s Active Directory Description updated.")
-$ActionLog += $user.username + " Attributes Updated - Description"
+$global:ActionLog += $din + " Attributes Updated - Description"
 
 # Move the account to the Leavers OU
 Move-ADObject -Identity $dn -TargetPath "OU=Leavers,OU=Disabled Accounts,OU=Decommissioned Computers,DC=sbs,DC=ox,DC=ac,DC=uk"
 Write-Verbose  ("* " + $din + "'s Active Directory account moved to 'Leavers' OU")
-$ActionLog += $user.username + "Active Directory account moved to 'Leavers' OU"
+$global:ActionLog += $din + "Active Directory account moved to 'Leavers' OU"
 
-$ActionLog | out-file -FilePath  $LogFolder\DisableAaccount-$date.log -Force
-Stop-Transcript
-[System.Windows.Forms.MessageBox]::Show("Account for $din has been processed. Please review Logs if errors appear")
+$global:ActionLog | out-file -FilePath  $LogFolder\DisableAccount-$date.log -Force
+
+#Uncomment if you have re-enabled session logging for debugging
+#Stop-Transcript
+
+[System.Windows.Forms.MessageBox]::Show("Account for $din has been processed")
 }
 )
 

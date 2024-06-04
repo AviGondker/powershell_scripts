@@ -1,1 +1,9 @@
 https://stackoverflow.com/questions/12368142/powershell-retrieving-a-variable-from-a-text-file
+
+
+Split variable into other variables
+
+$string = 'FirstPart SecondPart'
+$a,$b = $string.split(' ')
+$a
+$b

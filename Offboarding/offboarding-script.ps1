@@ -18,6 +18,9 @@ Active Directory Section:
 # Implement a tick box for "Holding" - will then move to Holding and add additional/different notes etc?
 # Exports a list of the user's group memberships (permissions) to an Excel file in a specified directory.
 
+Version History
+V1 - Script Only
+
 ############################################################################################################>
 
 # Import-Module ActiveDirectory
