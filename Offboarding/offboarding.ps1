@@ -18,13 +18,16 @@ Active Directory Section:
 # Implement a tick box for "Holding" - will then move to Holding and add additional/different notes etc?
 # Exports a list of the user's group memberships (permissions) to an Excel file in a specified directory?
 
+Version History
+V1 - Script Only
+V2 - 03/05/2024 - Added a GUI
+
 ############################################################################################################>
 
 Import-Module ActiveDirectory
 
 # Initialise Variables
 $LogFolder = "C:\offboarding\logs"
-$date = [datetime]::Today.ToString('dd-MM-yyyy')
 $VerbosePreference = "Continue"
 $ActionLog = @()
 
@@ -132,8 +135,9 @@ $processButton.Add_Click(
 $sam = $UsernameField.Text
 $user = $(try {Get-ADUser $sam -properties distinguishedName, displayName} catch {$null})
 $din = $user.displayName
-$dn= $user.distinguishedName
+$dn = $user.distinguishedName
 $ticketRef = $TicketField.Text
+$date = [datetime]::Today.ToString('dd-MM-yyyy')
 
 # Set Account Expiry Date
 Set-ADAccountExpiration -Identity $dn -DateTime $date
