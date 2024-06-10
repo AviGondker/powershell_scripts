@@ -166,7 +166,7 @@ $global:ActionLog += $din + " Attributes Updated - Description"
 # Move the account to the Leavers OU
 Move-ADObject -Identity $dn -TargetPath "OU=Leavers,OU=Disabled Accounts,OU=Decommissioned Computers,DC=sbs,DC=ox,DC=ac,DC=uk"
 Write-Verbose  ("* " + $din + "'s Active Directory account moved to 'Leavers' OU")
-$global:ActionLog += $din + "Active Directory account moved to 'Leavers' OU"
+$global:ActionLog += $din + " Active Directory account moved to 'Leavers' OU"
 
 $global:ActionLog | out-file -FilePath  $LogFolder\DisableAccount-$date.log -Force
 
