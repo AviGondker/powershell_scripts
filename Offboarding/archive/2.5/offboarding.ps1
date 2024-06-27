@@ -151,7 +151,7 @@ $ticketRef = $TicketField.Text
 if ($holdingcheckbox.Checked -eq $true)
 {
 # Add the relevant info to the leavers description on the account's properties page
-Set-ADUser $dn -Description ("HOLDING - $ticketRef")
+Set-ADUser $dn -Description ("HOLDING - $ticketRef - $date")
 Write-Verbose  ("* " + $din + "'s Active Directory Description updated.")
 $global:ActionLog += $din + " Attributes Updated - Description"
 
