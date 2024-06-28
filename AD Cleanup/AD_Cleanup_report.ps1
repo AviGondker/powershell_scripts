@@ -1,4 +1,17 @@
-﻿Import-Module ActiveDirectory
+﻿##  Active Directory Cleanup Report Generator
+##  This script exports a list of all DISABLED accounts in the Leavers OU, that have not been modified for 60 days.
+##  Avi Gondker 2024
+
+## Suggestion for improvments
+# Variable for number of days to use
+# Variable for the path
+# Variable for the OU
+# Add a GUI?
+
+#  Revisions
+#  1/6/2024 - V1   First Draft
+
+#Import-Module ActiveDirectory
 
 # Get the date 60 days ago
 $date = (Get-Date).AddDays(-60)
